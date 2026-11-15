@@ -1,0 +1,24 @@
+TANGGA GALAKSI - PAKET UNTUK VERCEL
+====================================
+
+Isi paket (semua di satu folder, jangan dipisah):
+  index.html        Game utama (Misi Tim untuk IFP)
+  uji-battle.html   Uji simulasi host 40 siswa tiruan (tanpa jaringan)
+  uji-koneksi.html  Uji koneksi nyata host dan HP siswa
+  vercel.json       Pengaturan keamanan dasar untuk Vercel
+
+Cara menerbitkan di Vercel:
+  1. Ekstrak berkas .zip ini ke satu folder.
+  2. Terbitkan folder itu ke proyek Vercel Anda dengan cara yang biasa Anda pakai
+     (misalnya "vercel --prod" dari dalam folder, atau lewat repositori Git).
+  3. Buka alamat proyek: halaman utama adalah index.html.
+     Halaman uji: /uji-battle.html dan /uji-koneksi.html
+
+Opsional (agar tidak bergantung pada server luar):
+  Unduh three.min.js (Three.js r128) dari cdnjs lewat Wi-Fi dan simpan di folder
+  yang sama dengan index.html. Game akan memakai salinan itu lebih dulu.
+
+Catatan:
+  - Halaman uji ikut terbit dan bisa dibuka siapa pun yang tahu alamatnya.
+    Hapus kedua berkas uji-*.html bila tidak ingin diterbitkan.
+  - Pengaturan dan bank soal tersimpan di browser tiap perangkat.
