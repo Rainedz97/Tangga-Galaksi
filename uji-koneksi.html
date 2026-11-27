@@ -45,7 +45,8 @@ pre{white-space:pre-wrap;margin:0;font:12.5px/1.5 ui-monospace,monospace;max-hei
       <div class="stat"><small>Langsung / Relay / MQTT</small><b id="h-mix">0 / 0 / 0</b></div>
     </div>
     <div class="row"><button class="go" id="b-bx">Siaran uji 10 detik (20 pesan/detik)</button><button id="b-diag">Salin diagnosa</button><span id="bx-note" style="color:var(--mut)"></span></div>
-    <div style="overflow:auto"><table><thead><tr><th>Nama</th><th>Jalur</th><th>RTT terakhir</th><th>Rata-rata</th><th>Maks</th><th>Aktif</th><th>Pesan uji diterima</th></tr></thead><tbody id="tbl"></tbody></table></div>
+    <div style="overflow:auto"><table><thead><tr><th>Nama</th><th>Jalur</th><th>RTT terakhir</th><th>Median</th><th>Rata-rata</th><th>Maks</th><th>Aktif</th><th>Pesan uji diterima</th></tr></thead><tbody id="tbl"></tbody></table></div>
+    <p style="margin:0;font-size:13px">Catatan: tab siswa yang berada di latar belakang pada perangkat yang sama bisa menaikkan RTT karena diperlambat peramban. Uji dari perangkat terpisah dan biarkan tab tetap di depan. Median lebih mewakili kondisi biasa daripada Maks.</p>
     <pre id="h-err"></pre>
   </section>
 
@@ -77,6 +78,7 @@ const GameEngine=(()=>{
     E.alive=()=>E.players.filter(p=>!p.off).length;
     E.need=()=>Math.min(E.set.win,Math.max(1,E.alive()-1));
     E.checkOver=()=>{if(!E.over&&E.finished.length>=E.need()){E.over=true;return true}return false};
+    E.addPlayer=()=>{const i=E.players.length;E.players.push({i,pos:0,right:0,wrong:0,done:false,rank:0,at:0,off:false,order:shuf(E.qs.map((_,k)=>k)),k:0,cur:null,ord:[0,1,2,3],locked:true});return i};
     E.deal=i=>{
       const p=E.players[i];
       if(!E.qs.length||p.done||E.over)return null;
@@ -120,7 +122,6 @@ const GameEngine=(()=>{
   }
   return{create};
 })();
-
 // ===== BATTLE GALAKSI: protokol, host, klien siswa, jaringan virtual, dan bot (murni, tanpa DOM/3D, tanpa jaringan nyata) =====
 const BattleProto=(()=>{
   const V=1,enc=o=>JSON.stringify(o);
@@ -132,7 +133,7 @@ const BattleProto=(()=>{
 
 function createBattleHost(cfg){
   const P=BattleProto,max=cfg.max||40,now=cfg.now||(()=>Date.now());
-  const H={state:'lobby',players:[],E:null,stats:{in:0,out:0,bIn:0,bOut:0,drops:0,resend:0,bad:0,full:0},onLobby:null,onEvents:null,onOver:null};
+  const H={state:'lobby',players:[],E:null,stats:{in:0,out:0,bIn:0,bOut:0,drops:0,resend:0,bad:0,full:0},onLobby:cfg.onLobby||null,onEvents:cfg.onEvents||null,onOver:cfg.onOver||null,onJoin:cfg.onJoin||null};
   const byCid=new Map(),byToken=new Map();
   let dirty=false,lastBd=0,lastSy=0;
   const send=(p,m)=>{if(p.cid==null)return;const s=P.enc(m);H.stats.out++;H.stats.bOut+=s.length;cfg.send(p.cid,s)};
@@ -178,11 +179,14 @@ function createBattleHost(cfg){
           p.cid=cid;byCid.set(cid,p);p.off=false;if(H.E)H.E.players[p.idx].off=false;
         }
         if(p){p.seen=t;send(p,{t:'wl',id:p.id,token:p.token,name:p.name,state:H.state});if(H.state==='play')sendView(p);else if(H.state==='over')sendOver(p);return}
-        if(H.state!=='lobby'){sendRaw(cid,{t:'err',c:'started'});return}
+        if(H.state==='over'){sendRaw(cid,{t:'err',c:'over'});return}
         if(H.players.length>=max){H.stats.full++;sendRaw(cid,{t:'err',c:'full'});return}
         p={id:H.players.length+1,name:uniq(m.name),token:P.rand(),cid,idx:-1,off:false,seen:t,qid:0,sq:0,q:null,lastRes:null};
         H.players.push(p);byCid.set(cid,p);byToken.set(p.token,p);
-        send(p,{t:'wl',id:p.id,token:p.token,name:p.name,state:H.state});lobby();return;
+        send(p,{t:'wl',id:p.id,token:p.token,name:p.name,state:H.state});
+        if(H.state==='lobby')lobby();
+        else{p.idx=H.E.addPlayer();send(p,{t:'st',n:H.players.length});nextQ(p);dirty=true;H.onJoin&&H.onJoin(p)}
+        return;
       }
       const p=byCid.get(cid);if(!p)return;
       p.seen=t;
@@ -215,6 +219,7 @@ function createBattleHost(cfg){
     lastBd=lastSy=now();
     return true;
   };
+  H.endNow=()=>{if(H.state!=='play'||!H.E)return false;H.E.over=true;finishGame();return true};
   H.kick=id=>{
     const p=H.players.find(x=>x.id===id);if(!p)return false;
     send(p,{t:'kick'});if(p.cid!=null)byCid.delete(p.cid);byToken.delete(p.token);p.cid=null;p.off=true;p.kicked=true;
@@ -319,7 +324,6 @@ function createBattleSim(o){
   sim.converged=()=>!host.E?0:bots.filter(b=>b.alive&&b.S.id&&host.E.players[host.players.find(p=>p.id===b.S.id).idx].pos===b.S.pos).length;
   return sim;
 }
-
 // ===== TRANSPORT BATTLE GALAKSI: PeerJS (langsung, utama) + MQTT lewat WSS (cadangan) =====
 // Catatan: server STUN/TURN dan broker MQTT di bawah adalah layanan publik gratis yang dipakai bersama.
 // Untuk kelas penting, ganti dengan server sendiri lewat konfigurasi (conf.ice, conf.brokers, conf.peerServer).
@@ -438,7 +442,14 @@ function createStudentNet(cfg){
     try{
       const o={config:{iceServers:C.ice},debug:0};if(C.peerServer)Object.assign(o,C.peerServer);
       const pr=peer=new Peer(undefined,o);
-      pr.on('error',e=>{err('p2p',e);if(pr===peer){clearTimeout(timer);failP2P(e&&e.type==='peer-unavailable'?'guru tidak ditemukan':'galat')}});
+      pr.on('error',e=>{
+        err('p2p',e);
+        if(pr!==peer)return;
+        // galat sinyal ke server perantara tidak memutus sambungan data yang sudah terbuka
+        if(opened&&e&&['network','server-error','socket-error','socket-closed'].includes(e.type))return;
+        clearTimeout(timer);failP2P(e&&e.type==='peer-unavailable'?'guru tidak ditemukan':'galat');
+      });
+      pr.on('disconnected',()=>{if(opened)st('p2p','terhubung (server perantara putus)')});
       pr.on('open',()=>{
         const cn=conn=pr.connect('tg-'+cfg.room,{reliable:true,serialization:'json'});
         cn.on('open',()=>{
@@ -481,7 +492,6 @@ function createStudentNet(cfg){
   N.close=()=>{N.closed=true;clean();try{mq&&mq.end(true)}catch(e){}};
   return N;
 }
-
 const LAD={4:25,9:31,20:41,28:84,40:59,51:67,63:81,71:91},SNK={17:7,54:34,62:19,64:60,87:24,93:73,95:75,99:78};
 const QS=Array.from({length:10},(_,i)=>({q:'Soal '+(i+1),o:['A','B','C','D'],a:i%4}));
 const $=id=>document.getElementById(id),esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -523,7 +533,7 @@ async function startHost(){
   const net=createHostNet({room,deps,
     onMessage:(cid,s)=>{
       try{const m=JSON.parse(s),o=stats.get(cid)||(stats.set(cid,{}),stats.get(cid));
-        if(m.t==='ping'&&typeof m.rtt==='number'){o.rtt=m.rtt;o.n=(o.n||0)+1;o.sum=(o.sum||0)+m.rtt;o.max=Math.max(o.max||0,m.rtt)}
+        if(m.t==='ping'&&typeof m.rtt==='number'&&m.rtt>0){o.rtt=m.rtt;o.n=(o.n||0)+1;o.sum=(o.sum||0)+m.rtt;o.max=Math.max(o.max||0,m.rtt);(o.h=o.h||[]).push(m.rtt);if(o.h.length>40)o.h.shift()}
         if(m.t==='bxr'){o.got=m.got;o.total=m.total}
       }catch(e){}
       host.receive(cid,s);
@@ -541,9 +551,9 @@ function renderHost(){
   $('tbl').innerHTML=host.players.map(p=>{
     const o=stats.get(p.cid)||{},lab=label(o.path,o.route);
     if(o.path==='mqtt')m++;else if(o.route==='relay')r++;else if(o.path==='p2p')d++;
-    const avg=o.n?Math.round(o.sum/o.n):'-',act=Math.max(0,Math.round((host.now?host.now():t)/1000-(p.seen||0)/1000));
+    const avg=o.n?Math.round(o.sum/o.n):'-',med=o.h&&o.h.length?o.h.slice().sort((a,b)=>a-b)[o.h.length>>1]:'-',act=Math.max(0,Math.round((host.now?host.now():t)/1000-(p.seen||0)/1000));
     const loss=o.total?(Math.round(100*o.got/o.total)+'%'):'-';
-    return '<tr><td>'+esc(p.name)+'</td><td>'+esc(lab)+'</td><td>'+(o.rtt!==undefined?o.rtt+' ms':'-')+'</td><td>'+avg+(avg==='-'?'':' ms')+'</td><td>'+(o.max!==undefined?o.max+' ms':'-')+'</td><td class="'+(p.off?'bad':'ok')+'">'+(p.off?'terputus':'aktif')+'</td><td>'+loss+'</td></tr>';
+    return '<tr><td>'+esc(p.name)+'</td><td>'+esc(lab)+'</td><td>'+(o.rtt!==undefined?o.rtt+' ms':'-')+'</td><td>'+med+(med==='-'?'':' ms')+'</td><td>'+avg+(avg==='-'?'':' ms')+'</td><td>'+(o.max!==undefined?o.max+' ms':'-')+'</td><td class="'+(p.off?'bad':'ok')+'">'+(p.off?'terputus':'aktif')+'</td><td>'+loss+'</td></tr>';
   }).join('');
   $('h-n').textContent=host.players.filter(p=>!p.off).length+' / '+host.players.length;
   $('h-mix').textContent=d+' / '+r+' / '+m;
@@ -560,7 +570,7 @@ function runBx(){
 function hostDiag(){
   const {host,stats,room}=HOST,s=HOST.net.status;
   return ['Diagnosa host Battle Galaksi','Ruangan: '+room,'P2P: '+s.p2p+' | MQTT: '+s.mqtt+' ('+s.broker+')','Siswa: '+host.players.length,
-    ...host.players.map(p=>{const o=stats.get(p.cid)||{};return ' - '+p.name+': '+label(o.path,o.route)+', RTT '+(o.rtt!==undefined?o.rtt:'-')+' ms (rata-rata '+(o.n?Math.round(o.sum/o.n):'-')+', maks '+(o.max!==undefined?o.max:'-')+'), '+(p.off?'terputus':'aktif')+(o.total?', pesan uji '+o.got+'/'+o.total:'')}),
+    ...host.players.map(p=>{const o=stats.get(p.cid)||{};return ' - '+p.name+': '+label(o.path,o.route)+', RTT '+(o.rtt!==undefined?o.rtt:'-')+' ms (rata-rata '+(o.h&&o.h.length?o.h.slice().sort((a,b)=>a-b)[o.h.length>>1]:'-')+' median, '+(o.n?Math.round(o.sum/o.n):'-')+' rata-rata, maks '+(o.max!==undefined?o.max:'-')+'), '+(p.off?'terputus':'aktif')+(o.total?', pesan uji '+o.got+'/'+o.total:'')}),
     'Galat: '+(s.errors.join(' | ')||'-'),'Peramban: '+navigator.userAgent].join('\n');
 }
 // ===== SISWA =====
