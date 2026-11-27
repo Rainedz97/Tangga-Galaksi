@@ -98,6 +98,36 @@ dialog h2{margin:0 0 6px}
 #bottom{touch-action:none;-webkit-tap-highlight-color:transparent}
 .tc button{touch-action:none;user-select:none;-webkit-user-select:none}
 body.mode-tim #pdd,body.mode-tim #pdv{display:none}
+[hidden]{display:none!important}
+.big{font-size:44px;font-weight:800;letter-spacing:.2em;line-height:1.1}
+.muted{opacity:.8;font-size:13px}
+.go{background:linear-gradient(135deg,#8b5cf6,#ec4899);color:#fff}
+#lobby,#sj,#sfin{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(94vw,640px);max-height:88vh;overflow:auto;z-index:15;display:grid;gap:10px;padding:16px}
+#lobby h2,#sj h2,#sfin h2{margin:0}
+.lrow{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+#lqr{width:160px;height:160px;border-radius:10px;background:#fff}
+#llink,#sjname{font:inherit;color:inherit;background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;box-sizing:border-box}
+#lplayers{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border-radius:999px;padding:4px 6px 4px 10px;font-size:13px}
+.chip i{width:10px;height:10px;border-radius:50%}.chip small{opacity:.7}
+.chip button{padding:0 6px;background:transparent;color:inherit;font-size:12px}
+#bt{display:grid;gap:6px}
+.bth{display:flex;justify-content:space-between;gap:8px;font-size:var(--u)}
+#btr{list-style:none;margin:0;padding:0;columns:2;column-gap:calc(var(--u)*1.2);font-size:var(--u)}
+#btr li{display:flex;align-items:center;gap:6px;break-inside:avoid;padding:1px 0}
+#btr li span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btr li i{width:10px;height:10px;border-radius:50%;flex:none}
+#btr li em{opacity:.6;font-style:normal;min-width:2ch}
+#bt button{padding:calc(var(--u)*.45) calc(var(--u)*.9);font-size:var(--u)}
+body.host #rank,body.stu #top,body.stu #rank,body.stu #bottom{display:none}
+#sv{position:relative;flex:none;margin:0 6px calc(6px + env(safe-area-inset-bottom,0px));padding:10px;display:grid;gap:8px}
+.svh{display:flex;align-items:center;gap:10px}.svh canvas{width:48px;height:48px}
+#svstat{font-size:13px;opacity:.85}#svq{font-weight:700;font-size:17px;line-height:1.25}
+#svo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#svo button{padding:14px 10px;font-size:16px;text-align:left;font-weight:600;background:var(--line);color:var(--ink);touch-action:manipulation}
+#svo button.sel{outline:3px solid var(--btn)}
+#svo button.ok{background:#2fc47a;color:#fff;opacity:1}#svo button.no{background:#e0364a;color:#fff;opacity:1}
+#svt{font-size:12px;opacity:.8}
 </style>
 </head>
 <body class="intro mode-tim">
@@ -105,8 +135,12 @@ body.mode-tim #pdd,body.mode-tim #pdv{display:none}
 <div class="panel" id="top"><h1>Tangga Galaksi</h1><label>Tim <select id="np"><option>2</option><option>3</option><option>4</option></select></label><button id="imp" class="ghost">Bank soal</button><button id="stb" class="ghost">Pengaturan</button><button id="snd" class="ghost">🔊</button><button id="hw2" class="ghost">Cara bermain</button><button id="fs" class="ghost">Layar penuh</button><button id="go" class="ghost">Main ulang</button></div>
 <div id="msg" aria-live="polite"></div>
 <div class="panel" id="rank"></div>
-<div id="intro"><div class="card"><h1>Tangga Galaksi</h1><div class="modes"><button id="m1" class="on" aria-pressed="true">Misi Tim<small>IFP, maksimal 4 tim</small></button><button id="m2" disabled title="Segera hadir">Battle Galaksi<small>segera hadir</small></button></div><label>Jumlah tim <select id="np2"><option>2</option><option>3</option><option selected>4</option></select></label><button id="hw" class="ghost">Cara bermain</button><button id="start">Mulai bermain</button></div></div>
-<div class="panel" id="bottom"><div id="teams"></div></div>
+<div id="intro"><div class="card"><h1>Tangga Galaksi</h1><div class="modes"><button id="m1" class="on" aria-pressed="true">Misi Tim<small>IFP, maksimal 4 tim</small></button><button id="m2">Battle Galaksi<small>semua siswa, HP masing-masing</small></button></div><label>Jumlah tim <select id="np2"><option>2</option><option>3</option><option selected>4</option></select></label><button id="hw" class="ghost">Cara bermain</button><button id="start">Mulai bermain</button></div></div>
+<div class="panel" id="bottom"><div id="bt" hidden><div class="bth"><b>Peringkat</b><span id="bts"></span></div><ol id="btr"></ol><div style="display:flex;gap:8px"><button id="btend" class="ghost">Akhiri sekarang</button><button id="btrep" class="ghost">Hasil</button></div></div><div id="teams"></div></div>
+<div class="panel" id="sv" hidden><div class="svh"><canvas id="sdc" width="84" height="84"></canvas><div><b id="svn"></b><div id="svstat"></div></div></div><div id="svq"></div><div id="svo"><button data-k="0" hidden></button><button data-k="1" hidden></button><button data-k="2" hidden></button><button data-k="3" hidden></button></div><div id="svt"></div></div>
+<div class="panel" id="lobby" hidden><h2>Battle Galaksi</h2><p class="muted" style="margin:0">Siswa membuka tautan atau memindai QR, lalu mengisi nama panggilan. Tidak ada data pribadi yang disimpan.</p><div class="lrow"><div><small class="muted">Kode ruangan</small><div class="big" id="lroom">------</div></div><canvas id="lqr" width="220" height="220" hidden></canvas></div><div style="display:flex;gap:8px"><input id="llink" readonly><button id="lcopy" class="ghost">Salin tautan</button></div><div class="muted" id="lstat"></div><div><b id="lcount">0 / 40 siswa</b><div id="lplayers"></div></div><div><button id="lstart" class="go" disabled>Mulai permainan</button></div></div>
+<div class="panel" id="sj" hidden><h2>Tangga Galaksi</h2><p style="margin:0">Ruangan <b id="sjroom"></b></p><input id="sjname" maxlength="16" placeholder="Nama panggilan" autocomplete="off"><button id="sjb" class="go">Gabung</button><div class="muted" id="sjs"></div></div>
+<div class="panel" id="sfin" hidden><h2>Permainan selesai</h2><div id="sfint"></div><button id="sfinx">Tutup</button></div>
 <dialog id="pd"><h2 id="pdh">Hasil Akhir</h2><div id="pdl"></div><textarea id="pdt" rows="6" hidden></textarea><div class="pdf"><button id="pdd">Unduh Word (.docx)</button><button id="pdv" class="ghost">CSV</button><button id="pdc" class="ghost">Tutup</button><button id="pdb" class="ghost">Main ulang</button></div></dialog>
 <canvas id="fx"></canvas>
 <dialog id="st"><h2>Pengaturan</h2>
@@ -464,13 +498,14 @@ function pawnTick(){
     if(!p.mv&&p.tgt){p.mesh.position.lerp(p.tgt,.18);p.sc+=(p.tsc-p.sc)*.18;p.mesh.scale.setScalar(p.sc)}
     const s=p.mesh.scale.x,l=p.mesh.userData.lab;
     if(l){l.scale.set(.95/s,.2375/s,1);l.position.y=1.05+.34/s}
-    if(SET.time&&p.cur&&!p.locked&&!p.done&&!over&&qs.length){
+    if(MODE==='tim'&&SET.time&&p.cur&&!p.locked&&!p.done&&!over&&qs.length){
       if(paused)p.t0+=dt;
       const r=1-(now-p.t0)/(SET.time*1000),b=$('tb'+p.i);
       if(b)b.style.width=Math.max(0,r*100)+'%';
       if(r<=0)answer(p.i,-1);
     }
   });
+  if(MODE==='host')hostLabelsTick();
 }
 
 // Bidak
@@ -501,8 +536,10 @@ function makePawn(color,name){
 }
 function slot(p,n){
   const occ=players.filter(q=>q===p||(q.vpos===n&&!q.mv)).sort((a,b)=>a.i-b.i),c=occ.length,k=occ.indexOf(p),b=P(n);
-  const L=c===1?[[0,0]]:c===2?[[-.22,0],[.22,0]]:[[-.2,-.2],[.2,-.2],[-.2,.2],[.2,.2]];
-  return{pos:new THREE.Vector3(b.x+L[k][0],b.y,b.z+L[k][1]),sc:c===1?.95:c===2?.75:.62};
+  let o,sc;
+  if(c<=4){const L=c===1?[[0,0]]:c===2?[[-.22,0],[.22,0]]:[[-.2,-.2],[.2,-.2],[-.2,.2],[.2,.2]];o=L[k];sc=c===1?.95:c===2?.75:.62}
+  else{const cols=Math.ceil(Math.sqrt(c)),rows=Math.ceil(c/cols),cell=(n===0?1:.86)/cols;o=[((k%cols)-(cols-1)/2)*cell,(Math.floor(k/cols)-(rows-1)/2)*cell];sc=Math.max(.14,Math.min(.62,cell*1.7))}
+  return{pos:new THREE.Vector3(b.x+o[0],b.y,b.z+o[1]),sc};
 }
 function spot(i,n){return slot(players[i],n).pos}
 function layoutAll(snap){
@@ -552,6 +589,7 @@ const GameEngine=(()=>{
     E.alive=()=>E.players.filter(p=>!p.off).length;
     E.need=()=>Math.min(E.set.win,Math.max(1,E.alive()-1));
     E.checkOver=()=>{if(!E.over&&E.finished.length>=E.need()){E.over=true;return true}return false};
+    E.addPlayer=()=>{const i=E.players.length;E.players.push({i,pos:0,right:0,wrong:0,done:false,rank:0,at:0,off:false,order:shuf(E.qs.map((_,k)=>k)),k:0,cur:null,ord:[0,1,2,3],locked:true});return i};
     E.deal=i=>{
       const p=E.players[i];
       if(!E.qs.length||p.done||E.over)return null;
@@ -595,6 +633,324 @@ const GameEngine=(()=>{
   }
   return{create};
 })();
+// ===== BATTLE GALAKSI: protokol, host, klien siswa, jaringan virtual, dan bot (murni, tanpa DOM/3D, tanpa jaringan nyata) =====
+const BattleProto=(()=>{
+  const V=1,enc=o=>JSON.stringify(o);
+  const dec=(s,max)=>{if(typeof s!=='string'||s.length>max)return null;try{const o=JSON.parse(s);return o&&typeof o==='object'&&typeof o.t==='string'?o:null}catch(e){return null}};
+  const cleanName=n=>String(n==null?'':n).replace(/[\u0000-\u001f<>&"'`\\]/g,'').replace(/\s+/g,' ').trim().slice(0,16);
+  const rand=()=>{try{if(typeof crypto!=='undefined'&&crypto.getRandomValues){const a=new Uint32Array(3);crypto.getRandomValues(a);return Array.from(a,x=>x.toString(36)).join('')}}catch(e){}return Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)};
+  return{V,enc,dec,cleanName,rand};
+})();
+
+function createBattleHost(cfg){
+  const P=BattleProto,max=cfg.max||40,now=cfg.now||(()=>Date.now());
+  const H={state:'lobby',players:[],E:null,stats:{in:0,out:0,bIn:0,bOut:0,drops:0,resend:0,bad:0,full:0},onLobby:cfg.onLobby||null,onEvents:cfg.onEvents||null,onOver:cfg.onOver||null,onJoin:cfg.onJoin||null};
+  const byCid=new Map(),byToken=new Map();
+  let dirty=false,lastBd=0,lastSy=0;
+  const send=(p,m)=>{if(p.cid==null)return;const s=P.enc(m);H.stats.out++;H.stats.bOut+=s.length;cfg.send(p.cid,s)};
+  const sendRaw=(cid,m)=>{const s=P.enc(m);H.stats.out++;H.stats.bOut+=s.length;cfg.send(cid,s)};
+  const lobby=()=>H.onLobby&&H.onLobby(H.players.map(p=>p.name));
+  const uniq=n=>{let b=P.cleanName(n)||'Pemain',x=b,k=2;const low=()=>H.players.some(p=>p.name.toLowerCase()===x.toLowerCase());while(low())x=b.slice(0,13)+' '+(k++);return x};
+  const rate=p=>{const t=now();p.tok=Math.min(8,(p.tok===undefined?8:p.tok)+(t-(p.tokAt||t))/250);p.tokAt=t;if(p.tok<1){H.stats.drops++;return true}p.tok-=1;return false};
+  const nextQ=p=>{
+    const d=H.E.deal(p.idx);
+    if(!d){p.q=null;return}
+    p.qid++;p.q={t:'q',qid:p.qid,text:d.q.q,opts:d.ord.map(k=>d.q.o[k])};send(p,p.q);
+  };
+  const me=p=>{const r=H.E.ranked(),i=r.indexOf(H.E.players[p.idx]);return[i+1,H.E.players[p.idx].pos]};
+  const sendView=p=>{
+    const ep=H.E.players[p.idx];
+    send(p,Object.assign({t:'vw',s:++p.sq,state:H.state,pos:ep.pos,right:ep.right,wrong:ep.wrong,rank:ep.done?ep.rank:0},p.q?{qid:p.q.qid,text:p.q.text,opts:p.q.opts}:{}));
+  };
+  const sendOver=p=>send(p,{t:'over',s:++p.sq,top:H.final,me:me(p)});
+  const finishGame=()=>{
+    H.state='over';
+    H.final=H.E.ranked().slice(0,10).map(ep=>[H.players[ep.i].name,ep.pos,ep.done?ep.rank:0]);
+    H.players.forEach(sendOver);
+    H.onOver&&H.onOver(H.final);
+  };
+  const bd=()=>{
+    const r=H.E.ranked(),top=r.slice(0,5).map(ep=>[H.players[ep.i].name,ep.pos,ep.done?ep.rank:0]);
+    H.players.forEach(p=>{
+      if(p.off)return;
+      const m={t:'bd',top,me:me(p),n:H.players.length},k=JSON.stringify([m.top,m.me,m.n]);
+      if(p.lastBd!==k){p.lastBd=k;send(p,m)}
+    });
+  };
+  H.receive=(cid,str)=>{
+    try{
+      H.stats.in++;H.stats.bIn+=(str&&str.length)||0;
+      const m=P.dec(str,1000);if(!m){H.stats.bad++;return}
+      const t=now();
+      if(m.t==='hello'){
+        if(m.v!==P.V){sendRaw(cid,{t:'err',c:'version'});return}
+        let p=byCid.get(cid);
+        if(!p&&typeof m.token==='string'&&byToken.has(m.token)){
+          p=byToken.get(m.token);if(p.cid!=null&&p.cid!==cid)byCid.delete(p.cid);
+          p.cid=cid;byCid.set(cid,p);p.off=false;if(H.E)H.E.players[p.idx].off=false;
+        }
+        if(p){p.seen=t;send(p,{t:'wl',id:p.id,token:p.token,name:p.name,state:H.state});if(H.state==='play')sendView(p);else if(H.state==='over')sendOver(p);return}
+        if(H.state==='over'){sendRaw(cid,{t:'err',c:'over'});return}
+        if(H.players.length>=max){H.stats.full++;sendRaw(cid,{t:'err',c:'full'});return}
+        p={id:H.players.length+1,name:uniq(m.name),token:P.rand(),cid,idx:-1,off:false,seen:t,qid:0,sq:0,q:null,lastRes:null};
+        H.players.push(p);byCid.set(cid,p);byToken.set(p.token,p);
+        send(p,{t:'wl',id:p.id,token:p.token,name:p.name,state:H.state});
+        if(H.state==='lobby')lobby();
+        else{p.idx=H.E.addPlayer();send(p,{t:'st',n:H.players.length});nextQ(p);dirty=true;H.onJoin&&H.onJoin(p)}
+        return;
+      }
+      const p=byCid.get(cid);if(!p)return;
+      p.seen=t;
+      if(p.off){p.off=false;if(H.E)H.E.players[p.idx].off=false;dirty=true}
+      if(m.t==='ping'){send(p,{t:'pong',t0:m.t0});if(H.state==='over')sendOver(p);return}
+      if(m.t==='resync'){if(H.state==='play')sendView(p);else if(H.state==='over')sendOver(p);return}
+      if(m.t==='ans'){
+        if(H.state!=='play')return;
+        if(rate(p))return;
+        if(p.lastRes&&m.q===p.lastRes.qid){H.stats.resend++;send(p,p.lastRes);return}
+        if(!p.q||m.q!==p.q.qid)return;
+        if(!Number.isInteger(m.o)||m.o<-1||m.o>3)return;
+        const evs=H.E.answer(p.idx,m.o);if(!evs)return;
+        const a=evs[0],ep=H.E.players[p.idx],C={roll:e=>['r',e.v],steps:e=>['s',e.from,e.to],back:e=>['b',e.from,e.to],ladder:e=>['l',e.from,e.to],hole:e=>['h',e.from,e.to],blocked:e=>['x',e.at],finish:e=>['f',e.rank]};
+        p.lastRes={t:'res',s:++p.sq,qid:p.q.qid,good:a.good,ci:a.ci,pos:ep.pos,right:ep.right,wrong:ep.wrong,rank:ep.done?ep.rank:0,ev:evs.slice(1).filter(e=>C[e.t]).map(e=>C[e.t](e))};
+        p.q=null;send(p,p.lastRes);dirty=true;
+        H.onEvents&&H.onEvents(p,evs);
+        if(evs.some(e=>e.t==='over'))finishGame();
+        else if(!ep.done)nextQ(p);
+      }
+    }catch(e){H.stats.bad++;cfg.onError&&cfg.onError(e)}
+  };
+  H.start=()=>{
+    if(H.state!=='lobby'||H.players.length<2)return false;
+    H.E=GameEngine.create({n:H.players.length,qs:cfg.qs,set:cfg.set,LAD:cfg.LAD,SNK:cfg.SNK});
+    H.state='play';
+    H.players.forEach((p,i)=>{p.idx=i;H.E.players[i].off=p.off});
+    H.players.forEach(p=>send(p,{t:'st',n:H.players.length}));
+    H.players.forEach(nextQ);
+    lastBd=lastSy=now();
+    return true;
+  };
+  H.endNow=()=>{if(H.state!=='play'||!H.E)return false;H.E.over=true;finishGame();return true};
+  H.kick=id=>{
+    const p=H.players.find(x=>x.id===id);if(!p)return false;
+    send(p,{t:'kick'});if(p.cid!=null)byCid.delete(p.cid);byToken.delete(p.token);p.cid=null;p.off=true;p.kicked=true;
+    if(H.E){H.E.players[p.idx].off=true;dirty=true;if(H.E.checkOver())finishGame()}
+    else{H.players.splice(H.players.indexOf(p),1);lobby()}
+    return true;
+  };
+  H.tick=()=>{
+    if(H.state!=='play')return;
+    const t=now();
+    if(dirty&&t-lastBd>=150){lastBd=t;dirty=false;bd()}
+    if(t-lastSy>=10000){lastSy=t;H.players.forEach(p=>{if(!p.off&&p.cid!=null)sendView(p)})}
+    for(const p of H.players){
+      if(!p.off&&t-p.seen>25000){p.off=true;H.E.players[p.idx].off=true;dirty=true;if(H.E.checkOver()){finishGame();break}}
+    }
+  };
+  return H;
+}
+
+function createBattleStudent(cfg){
+  const P=BattleProto,now=cfg.now||(()=>Date.now());
+  const S={name:cfg.name,token:cfg.token||null,id:null,state:'init',q:null,pos:0,right:0,wrong:0,rank:0,top:[],me:[0,0],lastRes:null,lastAns:null,sq:0,pending:null,pendAt:0,helloAt:-1e9,lastPing:0,seen:now(),over:null,err:null,onChange:()=>{},stats:{resend:0,sy:0}};
+  const out=o=>cfg.send(P.enc(o));
+  S.hello=()=>{S.helloAt=now();out({t:'hello',v:P.V,name:S.name,token:S.token})};
+  S.answer=o=>{if(!S.q||S.pending!==null)return false;S.pending=S.q.qid;S.pendAt=now();S.lastAns=o;out({t:'ans',v:P.V,q:S.q.qid,o});return true};
+  S.ping=()=>{S.lastPing=now();out({t:'ping',v:P.V,t0:now()})};
+  S.receive=str=>{
+    const m=P.dec(str,4000);if(!m)return;
+    S.seen=now();
+    switch(m.t){
+      case 'wl':S.id=m.id;S.token=m.token;S.name=m.name;if(S.state==='init'||S.state==='lobby')S.state=m.state;break;
+      case 'st':S.state='play';break;
+      case 'q':if(!S.q||m.qid>S.q.qid){if(!S.lastRes||m.qid>S.lastRes.qid){S.q={qid:m.qid,text:m.text,opts:m.opts};S.pending=null}}break;
+      case 'res':if(!S.lastRes||m.qid>=S.lastRes.qid)S.lastRes=m;if(m.s>S.sq){S.sq=m.s;S.pos=m.pos;S.right=m.right;S.wrong=m.wrong;S.rank=m.rank}if(S.q&&S.q.qid<=m.qid)S.q=null;if(S.pending!==null&&S.pending<=m.qid)S.pending=null;break;
+      case 'bd':S.top=m.top;S.me=m.me;break;
+      case 'vw':S.stats.sy++;if(S.state!=='over'&&S.state!=='kicked'&&m.s>S.sq)S.state=m.state;if(m.s>S.sq){S.sq=m.s;S.pos=m.pos;S.right=m.right;S.wrong=m.wrong;S.rank=m.rank}
+        if(m.qid&&(!S.q||m.qid>S.q.qid)&&(!S.lastRes||m.qid>S.lastRes.qid)){S.q={qid:m.qid,text:m.text,opts:m.opts};S.pending=null}break;
+      case 'over':S.state='over';S.over=m;S.q=null;if(m.s>S.sq){S.sq=m.s;S.me=m.me;S.pos=m.me[1]}break;
+      case 'kick':S.state='kicked';break;
+      case 'err':S.err=m.c;S.state='rejected';break;
+    }
+    S.onChange(m);
+  };
+  S.tick=()=>{
+    const t=now();
+    if(S.state==='rejected'||S.state==='kicked'||S.state==='over')return;
+    if(!S.id&&t-S.helloAt>3000)S.hello();
+    if(S.pending!==null&&t-S.pendAt>4000){S.pendAt=t;S.stats.resend++;out({t:'ans',v:P.V,q:S.pending,o:S.lastAns})}
+    if(t-S.lastPing>8000)S.ping();
+  };
+  return S;
+}
+// ===== TRANSPORT BATTLE GALAKSI: PeerJS (langsung, utama) + MQTT lewat WSS (cadangan) =====
+// Catatan: server STUN/TURN dan broker MQTT di bawah adalah layanan publik gratis yang dipakai bersama.
+// Untuk kelas penting, ganti dengan server sendiri lewat konfigurasi (conf.ice, conf.brokers, conf.peerServer).
+const TG_CFG={
+  ice:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'},{urls:'stun:stun.cloudflare.com:3478'},
+       {urls:'turn:openrelay.metered.ca:80',username:'openrelayproject',credential:'openrelayproject'},
+       {urls:'turn:openrelay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'}],
+  brokers:['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt','wss://test.mosquitto.org:8081'],
+  peerServer:null,
+  p2pTimeout:7000,mqttDelay:2500,retryBase:3000,topic:'tangga-galaksi/v1/'
+};
+async function tgRoute(pc){
+  try{
+    const st=await pc.getStats(),cand={};let pair=null;
+    st.forEach(r=>{if(r.type==='local-candidate'||r.type==='remote-candidate')cand[r.id]=r});
+    st.forEach(r=>{if(r.type==='candidate-pair'&&r.state==='succeeded'&&(!pair||r.nominated))pair=r});
+    if(!pair)return'?';
+    const a=cand[pair.localCandidateId],b=cand[pair.remoteCandidateId];
+    const ta=a&&a.candidateType,tb=b&&b.candidateType;
+    if(ta==='relay'||tb==='relay')return'relay';
+    if(ta==='host'&&tb==='host')return'lokal';
+    return'nat';
+  }catch(e){return'?'}
+}
+const tgStr=p=>{if(typeof p==='string')return p;try{return new TextDecoder().decode(p)}catch(e){return String(p)}};
+
+function createHostNet(cfg){
+  const C=Object.assign({},TG_CFG,cfg.conf||{}),{Peer,mqtt}=cfg.deps||{};
+  const N={conns:new Map(),status:{p2p:'mulai',mqtt:'mulai',broker:'-',errors:[]},closed:false};
+  const st=(k,v)=>{N.status[k]=v;cfg.onStatus&&cfg.onStatus(N.status)};
+  const err=(w,e)=>{N.status.errors.push(w+': '+((e&&(e.type||e.message))||e));if(N.status.errors.length>20)N.status.errors.shift();cfg.onStatus&&cfg.onStatus(N.status)};
+  let peer=null,mq=null,bi=0;
+  const recon=ms=>setTimeout(()=>{if(!N.closed&&peer&&peer.disconnected&&!peer.destroyed)try{peer.reconnect()}catch(e){}},ms);
+  function startP2P(){
+    if(N.closed)return;
+    if(!Peer){st('p2p','pustaka tidak termuat');return}
+    try{
+      const o={config:{iceServers:C.ice},debug:0};if(C.peerServer)Object.assign(o,C.peerServer);
+      const pr=peer=new Peer('tg-'+cfg.room,o);
+      pr.on('open',()=>st('p2p','siap'));
+      pr.on('connection',conn=>{
+        const cid='p:'+conn.peer;
+        conn.on('open',()=>{
+          N.conns.set(cid,{type:'p2p',conn,route:'?'});cfg.onPeer&&cfg.onPeer(cid,{path:'p2p',route:'?'});
+          if(conn.peerConnection)tgRoute(conn.peerConnection).then(r=>{const c=N.conns.get(cid);if(c&&c.conn===conn){c.route=r;cfg.onPeer&&cfg.onPeer(cid,{path:'p2p',route:r})}});
+        });
+        conn.on('data',d=>cfg.onMessage(cid,tgStr(d)));
+        conn.on('close',()=>{const c=N.conns.get(cid);if(c&&c.conn===conn){N.conns.delete(cid);cfg.onClose&&cfg.onClose(cid)}});
+        conn.on('error',e=>err('koneksi',e));
+      });
+      pr.on('disconnected',()=>{st('p2p','putus');recon(1500)});
+      pr.on('error',e=>{
+        err('p2p',e);
+        if(e&&e.type==='unavailable-id')st('p2p','kode dipakai');
+        else if(e&&['network','server-error','socket-error','socket-closed'].includes(e.type)){st('p2p','gangguan');recon(3000)}
+      });
+    }catch(e){err('p2p',e);st('p2p','gagal')}
+  }
+  function startMQTT(){
+    if(N.closed)return;
+    if(!mqtt){st('mqtt','pustaka tidak termuat');return}
+    const url=C.brokers[bi%C.brokers.length];st('broker',url);
+    let ok=false;
+    try{mq=mqtt.connect(url,{clientId:'tgh-'+cfg.room+'-'+Math.random().toString(36).slice(2,8),connectTimeout:6000,reconnectPeriod:0,clean:true,keepalive:30})}
+    catch(e){err('mqtt',e);bi++;setTimeout(startMQTT,1000);return}
+    const me=mq;
+    me.on('connect',()=>{ok=true;me.subscribe(C.topic+cfg.room+'/up',{qos:0},e=>{if(e)err('mqtt-sub',e);else st('mqtt','siap')})});
+    me.on('message',(t,payload)=>{
+      let m;try{m=JSON.parse(tgStr(payload))}catch(e){return}
+      if(!m||typeof m.c!=='string'||typeof m.m!=='string'||m.c.length>40)return;
+      const cid='m:'+m.c;
+      if(!N.conns.has(cid)){N.conns.set(cid,{type:'mqtt',route:'broker'});cfg.onPeer&&cfg.onPeer(cid,{path:'mqtt',route:'broker'})}
+      cfg.onMessage(cid,m.m);
+    });
+    me.on('error',e=>err('mqtt',e));
+    me.on('close',()=>{if(N.closed||me!==mq)return;st('mqtt','putus');if(!ok)bi++;setTimeout(startMQTT,ok?1500:600)});
+  }
+  N.send=(cid,str)=>{
+    const c=N.conns.get(cid);if(!c)return false;
+    try{
+      if(c.type==='p2p'){if(c.conn.open){c.conn.send(str);return true}return false}
+      if(mq&&mq.connected){mq.publish(C.topic+cfg.room+'/dn/'+cid.slice(2),str,{qos:0});return true}
+    }catch(e){err('kirim',e)}
+    return false;
+  };
+  N.close=()=>{N.closed=true;try{peer&&peer.destroy()}catch(e){}try{mq&&mq.end(true)}catch(e){}};
+  startP2P();startMQTT();
+  return N;
+}
+
+function createStudentNet(cfg){
+  const C=Object.assign({},TG_CFG,cfg.conf||{}),{Peer,mqtt}=cfg.deps||{};
+  const N={path:null,route:null,status:{p2p:'-',mqtt:'-',errors:[]},closed:false,cid:'s'+Math.random().toString(36).slice(2,10)};
+  let conn=null,peer=null,mq=null,mqRun=false,bi=0,busy=false,back=C.retryBase;
+  const st=(k,v)=>{N.status[k]=v;cfg.onStatus&&cfg.onStatus(N.status)};
+  const err=(w,e)=>{N.status.errors.push(w+': '+((e&&(e.type||e.message))||e));if(N.status.errors.length>20)N.status.errors.shift();cfg.onStatus&&cfg.onStatus(N.status)};
+  const announce=(p,route)=>{N.path=p;N.route=route||N.route;cfg.onPath&&cfg.onPath(p,N.route);cfg.onOpen&&cfg.onOpen(p)};
+  function clean(){
+    const c=conn,p=peer;conn=null;peer=null;busy=false;
+    try{c&&c.close()}catch(e){}try{p&&!p.destroyed&&p.destroy()}catch(e){}
+  }
+  function failP2P(why){
+    if(!busy)return;
+    st('p2p',why);clean();
+    if(N.path==='p2p'){
+      if(mq&&mq.connected)announce('mqtt','broker');else N.path=null;
+    }
+    if(!mqRun)tryMQTT();
+    if(!N.closed){const d=back;back=Math.min(30000,back*2);setTimeout(tryP2P,d)}
+  }
+  function tryP2P(){
+    if(N.closed||busy)return;
+    if(!Peer){st('p2p','pustaka tidak termuat');return}
+    busy=true;st('p2p','menyambung');
+    let opened=false;const timer=setTimeout(()=>{if(!opened)failP2P('waktu habis')},C.p2pTimeout);
+    try{
+      const o={config:{iceServers:C.ice},debug:0};if(C.peerServer)Object.assign(o,C.peerServer);
+      const pr=peer=new Peer(undefined,o);
+      pr.on('error',e=>{
+        err('p2p',e);
+        if(pr!==peer)return;
+        // galat sinyal ke server perantara tidak memutus sambungan data yang sudah terbuka
+        if(opened&&e&&['network','server-error','socket-error','socket-closed'].includes(e.type))return;
+        clearTimeout(timer);failP2P(e&&e.type==='peer-unavailable'?'guru tidak ditemukan':'galat');
+      });
+      pr.on('disconnected',()=>{if(opened)st('p2p','terhubung (server perantara putus)')});
+      pr.on('open',()=>{
+        const cn=conn=pr.connect('tg-'+cfg.room,{reliable:true,serialization:'json'});
+        cn.on('open',()=>{
+          opened=true;clearTimeout(timer);back=C.retryBase;st('p2p','terhubung');announce('p2p','?');
+          if(cn.peerConnection)tgRoute(cn.peerConnection).then(r=>{if(cn===conn){N.route=r;cfg.onPath&&cfg.onPath('p2p',r)}});
+        });
+        cn.on('data',d=>cfg.onMessage(tgStr(d)));
+        cn.on('close',()=>{if(cn===conn){clearTimeout(timer);failP2P('putus')}});
+        cn.on('error',e=>err('koneksi',e));
+      });
+    }catch(e){clearTimeout(timer);err('p2p',e);failP2P('galat')}
+  }
+  function tryMQTT(){
+    if(N.closed||mqRun)return;
+    if(!mqtt){st('mqtt','pustaka tidak termuat');return}
+    mqRun=true;const url=C.brokers[bi%C.brokers.length];st('mqtt','menyambung');
+    let ok=false,me=null;
+    try{me=mq=mqtt.connect(url,{clientId:'tgs-'+N.cid,connectTimeout:6000,reconnectPeriod:0,clean:true,keepalive:30})}
+    catch(e){err('mqtt',e);mqRun=false;bi++;setTimeout(tryMQTT,1000);return}
+    me.on('connect',()=>me.subscribe(C.topic+cfg.room+'/dn/'+N.cid,{qos:0},e=>{
+      if(e){err('mqtt-sub',e);return}
+      ok=true;st('mqtt','terhubung');if(N.path!=='p2p')announce('mqtt','broker');
+    }));
+    me.on('message',(t,payload)=>cfg.onMessage(tgStr(payload)));
+    me.on('error',e=>err('mqtt',e));
+    me.on('close',()=>{
+      if(N.closed||me!==mq)return;
+      st('mqtt','putus');mqRun=false;if(N.path==='mqtt')N.path=null;if(!ok)bi++;
+      setTimeout(tryMQTT,ok?1200:600);
+    });
+  }
+  N.send=str=>{
+    try{
+      if(N.path==='p2p'&&conn&&conn.open){conn.send(str);return true}
+      if(mq&&mq.connected&&N.path){mq.publish(C.topic+cfg.room+'/up',JSON.stringify({c:N.cid,m:str}),{qos:0});return true}
+    }catch(e){err('kirim',e)}
+    return false;
+  };
+  N.start=()=>{tryP2P();setTimeout(()=>{if(N.path!=='p2p'&&!mqRun)tryMQTT()},C.mqttDelay)};
+  N.close=()=>{N.closed=true;clean();try{mq&&mq.end(true)}catch(e){}};
+  return N;
+}
 
 // Permainan
 let players=[],turn=0,busy=false,over=false;
@@ -789,13 +1145,14 @@ async function play(p,evs){
   }
 }
 go.onclick=()=>setup(players.length);
-$('pdb').onclick=()=>{$('pd').close();setup(players.length)};
+$('pdb').onclick=()=>{if(MODE!=='tim'){location.reload();return}$('pd').close();setup(players.length)};
 $('pdd').onclick=()=>exportReport('docx');$('pdv').onclick=()=>exportReport('csv');$('pdc').onclick=()=>$('pd').close();
 $('rank').onclick=e=>{if(e.target.id==='rk')showPodium()};
 [$('hw'),$('hw2')].forEach(b=>b.onclick=()=>$('how').showModal());$('hwx').onclick=()=>$('how').close();
 if(!document.fullscreenEnabled)$('fs').hidden=true;
 $('fs').onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
 $('start').onclick=()=>{
+  if(SEL==='battle'){startHostFlow();return}
   $('np').value=$('np2').value;setup(+$('np').value);
   theta=((theta+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI;
   intro=false;homing=true;document.body.classList.remove('intro');startAudio();
@@ -828,7 +1185,7 @@ function parseBank(txt){
 try{const s=localStorage.getItem(BK);if(s!==null)qs=JSON.parse(s).map(norm).filter(Boolean)}catch(e){}
 const saveBank=()=>{try{localStorage.setItem(BK,JSON.stringify(qs))}catch(e){}};
 let editI=-1,dirty=false;
-function refreshQ(){if(!E)return;E.qs=qs;E.reorder();players.forEach(p=>{if(!p.done&&(!p.locked||p.empty))nextQ(p)})}
+function refreshQ(){if(!E||MODE!=='tim')return;E.qs=qs;E.reorder();players.forEach(p=>{if(!p.done&&(!p.locked||p.empty))nextQ(p)})}
 function renderBank(){
   $('bkn').textContent='('+qs.length+' soal)';
   $('bkl').innerHTML=qs.map((x,i)=>'<div class="bi"><div><b>'+(i+1)+'.</b> '+esc(x.q)+'<div class="bo">'+x.o.map((o,k)=>'<span class="'+(k===x.a?'ok':'')+'">'+'ABCD'[k]+'. '+esc(o)+'</span>').join('')+'</div></div><div class="ba"><button data-e="'+i+'" class="ghost">Edit</button><button data-d="'+i+'" class="ghost">Hapus</button></div></div>').join('')||'<p>Belum ada soal. Tambahkan secara manual atau impor file.</p>';
@@ -1013,13 +1370,251 @@ $('stx').onclick=()=>$('st').close();
 $('str').onclick=()=>{Object.assign(SET,SD);syncUI();saveSet();applySet()};
 $('snd').onclick=()=>{const on=!(SET.sfx||SET.mus);SET.sfx=SET.mus=on;syncUI();saveSet();applySet();if(on)startAudio()};
 syncUI();applySet();
-resize();placeCam();$('np').value=4;setup(4);
+// ===== BATTLE GALAKSI: peran host (guru) dan siswa, memakai mesin, protokol, dan transport yang sama =====
+const QPARAM=new URLSearchParams(location.search).get('r');
+let MODE=QPARAM?'stu':'tim',SEL='tim';
+const deps={};
+let BT=null,HN=null,hostTimer=0,SS=null,SN=null,SP=null,stuPlaying=false,stuQid=-1,stuOverShown=false;
+const HI=new Map(),topLab=[];
+const NETLIBS={
+  Peer:['https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js','https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js'],
+  mqtt:['https://unpkg.com/mqtt@4.3.7/dist/mqtt.min.js','https://cdn.jsdelivr.net/npm/mqtt@4.3.7/dist/mqtt.min.js'],
+  qrcode:['https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js','https://unpkg.com/qrcode-generator@1.4.4/qrcode.js']
+};
+function loadLib(name){
+  return new Promise(res=>{
+    if(window[name]){res(true);return}
+    let i=0;
+    const next=()=>{
+      if(i>=NETLIBS[name].length){res(false);return}
+      const s=document.createElement('script');let done=false;
+      const tm=setTimeout(()=>{if(!done){done=true;next()}},9000);
+      s.src=NETLIBS[name][i++];
+      s.onload=()=>{if(done)return;done=true;clearTimeout(tm);window[name]?res(true):next()};
+      s.onerror=()=>{if(done)return;done=true;clearTimeout(tm);next()};
+      document.head.appendChild(s);
+    };
+    next();
+  });
+}
+async function loadNet(){const r=await Promise.all([loadLib('Peer'),loadLib('mqtt')]);deps.Peer=window.Peer;deps.mqtt=window.mqtt;return r[0]||r[1]}
+const genCode=()=>{const A='ABCDEFGHJKMNPQRSTUVWXYZ23456789',r=new Uint32Array(6);let s='';(window.crypto&&crypto.getRandomValues)?crypto.getRandomValues(r):r.forEach((_,i)=>{r[i]=Math.random()*1e9});for(let i=0;i<6;i++)s+=A[r[i]%A.length];return s};
+const pcol=i=>new THREE.Color().setHSL((i*.618034)%1,.72,.55).getHex();
+const phex=i=>'#'+pcol(i).toString(16).padStart(6,'0');
+const pathLabel=i=>!i?'menyambung':i.path==='mqtt'?'cadangan':i.route==='relay'?'relay':'langsung';
+// ---------- pion mini dan label nama untuk papan guru ----------
+const miniGeo={b:new THREE.CylinderGeometry(.16,.26,.42,12),h:new THREE.SphereGeometry(.22,12,10)},skinMat=new THREE.MeshStandardMaterial({color:0xffd9b8,roughness:.6});
+function makeMiniPawn(color){
+  const g=new THREE.Group(),m=new THREE.MeshStandardMaterial({color,roughness:.5}),b=new THREE.Mesh(miniGeo.b,m),h=new THREE.Mesh(miniGeo.h,skinMat);
+  b.position.y=.21;h.position.y=.62;g.add(b,h);scene.add(g);return g;
+}
+function makeNameSprite(){
+  const c=document.createElement('canvas');c.width=512;c.height=128;const k=c.getContext('2d'),tx=new THREE.CanvasTexture(c);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,depthTest:false,transparent:true}));sp.scale.set(1.5,.375,1);sp.renderOrder=10;
+  return{sp,name:'',pawn:null,draw(n,col){k.clearRect(0,0,512,128);k.fillStyle=col;k.beginPath();(k.roundRect||k.rect).call(k,8,12,496,104,50);k.fill();k.font='700 60px Fredoka,system-ui,sans-serif';k.textAlign='center';k.textBaseline='middle';k.lineWidth=8;k.strokeStyle='rgba(0,0,0,.35)';k.strokeText(n,256,66);k.fillStyle='#fff';k.fillText(n,256,66);tx.needsUpdate=true}};
+}
+function hostLabels(top){
+  top.forEach((p,i)=>{
+    let L=topLab[i];if(!L){L=topLab[i]=makeNameSprite();scene.add(L.sp)}
+    if(L.name!==NAME[p.i]){L.name=NAME[p.i];L.draw(NAME[p.i],hex(p.i))}
+    L.pawn=players[p.i]&&players[p.i].mesh;L.sp.visible=!!L.pawn;
+  });
+  for(let i=top.length;i<topLab.length;i++){topLab[i].sp.visible=false;topLab[i].pawn=null}
+}
+function hostLabelsTick(){topLab.forEach(L=>{if(L.pawn&&L.sp.visible){L.sp.position.copy(L.pawn.position);L.sp.position.y+=1.1}})}
+// ---------- HOST ----------
+async function startHostFlow(){
+  if(MODE==='host')return;
+  MODE='host';
+  players.forEach(p=>scene.remove(p.mesh));players=[];E=null;
+  document.body.classList.remove('mode-tim','intro');document.body.classList.add('host');
+  $('teams').hidden=true;$('np').parentElement.hidden=true;$('go').hidden=true;
+  $('lobby').hidden=false;$('lstat').textContent='Memuat pustaka jaringan...';
+  const okLib=await loadNet();
+  if(!okLib)$('lstat').textContent='Pustaka jaringan gagal dimuat. Periksa internet lalu muat ulang halaman.';
+  const room=genCode(),link=location.origin+location.pathname+'?r='+room;
+  $('lroom').textContent=room;$('llink').value=link;drawQR(link);
+  BT=createBattleHost({qs,set:SET,LAD,SNK,max:40,send:(cid,s)=>HN.send(cid,s),onLobby:renderLobby,onJoin:hostJoin,onOver:hostOver,onError:e=>console.error(e),onEvents:hostEvents});
+  HN=createHostNet({room,deps,
+    onMessage:(cid,s)=>BT.receive(cid,s),
+    onPeer:(cid,i)=>{HI.set(cid,Object.assign(HI.get(cid)||{},i));renderLobby()},
+    onClose:()=>renderLobby(),
+    onStatus:s=>{if(okLib)$('lstat').textContent='Jalur langsung: '+s.p2p+' | cadangan MQTT: '+s.mqtt}});
+  hostTimer=setInterval(()=>{BT.tick();BT.state==='play'?renderBt():renderLobby()},500);
+  renderLobby();
+}
+async function drawQR(link){
+  const c=$('lqr');await loadLib('qrcode');
+  if(!window.qrcode){c.hidden=true;return}
+  try{
+    const q=qrcode(0,'M');q.addData(link);q.make();
+    const n=q.getModuleCount(),sz=c.width,cell=Math.max(1,Math.floor(sz/(n+8))),off=Math.floor((sz-cell*n)/2),g=c.getContext('2d');
+    g.fillStyle='#fff';g.fillRect(0,0,sz,sz);g.fillStyle='#000';
+    for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))g.fillRect(off+k*cell,off+r*cell,cell,cell);
+    c.hidden=false;
+  }catch(e){c.hidden=true}
+}
+function renderLobby(){
+  if(!BT||BT.state!=='lobby')return;
+  const L=BT.players;
+  $('lcount').textContent=L.length+' / 40 siswa';
+  $('lplayers').innerHTML=L.map(p=>'<span class="chip"><i style="background:'+phex(p.id-1)+'"></i>'+esc(p.name)+' <small>'+pathLabel(HI.get(p.cid))+'</small><button data-kick="'+p.id+'" aria-label="Keluarkan '+esc(p.name)+'">\u2715</button></span>').join('');
+  $('lstart').disabled=L.length<2;
+}
+function hostPawn(p){
+  const i=p.idx;NAME[i]=p.name;COL[i]=pcol(i);
+  Object.assign(E.players[i],{mesh:makeMiniPawn(COL[i]),sc:.3,tsc:.3,tgt:new THREE.Vector3(),vpos:0,mv:false,chain:Promise.resolve()});
+}
+function startBattle(){
+  if(!BT||BT.state!=='lobby'||!BT.start())return;
+  E=BT.E;players=E.players;ansLog=E.log;over=false;
+  BT.players.forEach(hostPawn);layoutAll(true);
+  $('lobby').hidden=true;$('bt').hidden=false;
+  intro=false;homing=true;startAudio();renderBt();
+}
+function hostJoin(p){hostPawn(p);layoutAll();renderBt()}
+function hostEvents(p,evs){
+  const P=E&&E.players[p.idx];if(!P||!P.mesh)return;
+  const list=evs.slice(1);
+  P.chain=P.chain.then(()=>hostPlay(P,list)).catch(console.error);
+}
+async function hostPlay(P,evs){
+  P.mv=true;
+  try{
+    for(const e of evs){
+      if(e.t==='steps'||e.t==='back'){P.vpos=e.to;await tween(P.mesh,spot(P.i,e.to),e.t==='steps'?320:260,.5)}
+      else if(e.t==='ladder'){const pa=LADP[e.from];await tween(P.mesh,pa[0],120,.1);await travel(P.mesh,pa,800);P.vpos=e.to;await tween(P.mesh,spot(P.i,e.to),150,.1)}
+      else if(e.t==='hole'){
+        const b=BH[e.from];await tween(P.mesh,b.center,140,.1);
+        await travel(P.mesh,b.path,800,t=>P.mesh.scale.setScalar(Math.max(.05,P.sc*(1-t*.85))));
+        P.vpos=e.to;P.mesh.scale.setScalar(P.sc);await tween(P.mesh,spot(P.i,e.to),150,.1);
+      }
+      else if(e.t==='finish'){SFX.win();confetti(Math.round(60*QP));burst(P.mesh.position,0xffd34d,40)}
+    }
+  }finally{P.sc=P.mesh.scale.x;P.mv=false;layoutAll()}
+}
+function hostOver(){
+  Promise.all(players.map(p=>p.chain)).then(()=>setTimeout(()=>{over=true;showPodium()},900));
+}
+function renderBt(){
+  if(!E)return;
+  const r=ranked(),n=r.length;
+  $('btr').innerHTML=r.slice(0,10).map((p,i)=>'<li><em>'+(i+1)+'.</em><i style="background:'+hex(p.i)+'"></i><span>'+esc(NAME[p.i])+(p.off?' (offline)':'')+'</span><b>'+(p.done?(MEDAL[p.rank-1]||'\ud83c\udfc1'):p.pos)+'</b></li>').join('');
+  const on=players.filter(p=>!p.off).length,fin=players.filter(p=>p.done).length,tot=players.reduce((a,p)=>a+p.right+p.wrong,0),ok=players.reduce((a,p)=>a+p.right,0);
+  $('bts').textContent=on+'/'+n+' online \u00b7 selesai '+fin+' \u00b7 jawaban '+tot+(tot?' ('+Math.round(100*ok/tot)+'% benar)':'');
+  hostLabels(r.slice(0,5));
+}
+// ---------- SISWA ----------
+const tokKey=r=>'tg_tok_'+r,roomOf=()=>String(QPARAM||'').toUpperCase().slice(0,6);
+function readTok(){try{return JSON.parse(localStorage.getItem(tokKey(roomOf())))}catch(e){return null}}
+function saveTok(){try{localStorage.setItem(tokKey(roomOf()),JSON.stringify({token:SS.token,name:SS.name}))}catch(e){}}
+function initStudent(){
+  document.body.classList.remove('intro','mode-tim');document.body.classList.add('stu');
+  intro=false;homing=false;
+  $('sjroom').textContent=roomOf();
+  const t=readTok();
+  try{$('sjname').value=(t&&t.name)||localStorage.getItem('tg_nama')||''}catch(e){}
+  $('sj').hidden=false;
+  $('sjb').onclick=joinBattle;
+  document.querySelectorAll('#svo button').forEach(b=>{b.addEventListener('pointerdown',e=>{e.preventDefault();stuAnswer(+b.dataset.k)});b.onclick=()=>stuAnswer(+b.dataset.k)});
+  $('sfinx').onclick=()=>{$('sfin').hidden=true};
+  if(t&&t.token)joinBattle();
+}
+async function joinBattle(){
+  if(SS)return;
+  const name=BattleProto.cleanName($('sjname').value)||('Siswa'+((Math.random()*90+10)|0)),saved=readTok();
+  try{localStorage.setItem('tg_nama',name)}catch(e){}
+  startAudio();$('sjb').disabled=true;$('sjs').textContent='Memuat pustaka jaringan...';
+  const okLib=await loadNet();
+  if(!okLib){$('sjs').textContent='Pustaka jaringan gagal dimuat. Periksa internet lalu muat ulang.';$('sjb').disabled=false;return}
+  $('sjs').textContent='Menyambung ke guru...';
+  SS=createBattleStudent({name,token:saved&&saved.token,send:s=>SN.send(s)});
+  SS.onChange=stuMsg;
+  SN=createStudentNet({room:roomOf(),deps,onMessage:s=>SS.receive(s),onOpen:()=>SS.hello(),onPath:()=>stuView()});
+  SN.start();setInterval(()=>SS.tick(),500);
+}
+function ensureStuPawn(){
+  if(SP)return;
+  SP={i:0,mesh:makePawn(0xffc531,SS.name),sc:.95,tsc:.95,tgt:new THREE.Vector3(),vpos:0,mv:false,chain:Promise.resolve(),ctx:$('sdc').getContext('2d')};
+  players=[SP];layoutAll(true);drawDie(SP.ctx);
+}
+function stuMsg(m){
+  if(m.t==='wl'){saveTok();ensureStuPawn();$('sj').hidden=true;$('sv').hidden=false}
+  else if(m.t==='res')stuRes(m);
+  else if(m.t==='over')stuOver();
+  else if(m.t==='err'){const T={full:'Ruangan penuh (maksimal 40 siswa).',over:'Permainan ini sudah selesai.',version:'Versi halaman berbeda, muat ulang halaman.'};$('sjs').textContent=T[m.c]||'Tidak bisa bergabung.';$('sjb').disabled=false;$('sj').hidden=false}
+  else if(m.t==='kick'){$('sv').hidden=true;$('sj').hidden=false;$('sjs').textContent='Kamu dikeluarkan oleh guru.'}
+  stuView();
+}
+function stuView(){
+  if(!SS||!SP)return;
+  const st=SS.state;
+  $('svn').textContent=SS.name;
+  $('svstat').textContent=(st==='play'||st==='over')?'Petak '+SS.pos+' \u00b7 Peringkat '+(SS.me[0]||'-')+' \u00b7 \u2713'+SS.right+' \u2717'+SS.wrong:'';
+  $('svt').textContent=SS.top&&SS.top.length?SS.top.slice(0,3).map((t,i)=>(i+1)+'. '+t[0]+' ('+t[1]+')').join('   '):'';
+  const q=SS.q,showQ=st==='play'&&q&&!stuPlaying;
+  document.querySelectorAll('#svo button').forEach(b=>{b.hidden=!showQ&&!(st==='play'&&stuPlaying)});
+  if(st==='init'){$('svq').textContent='Menyambung ke guru...'}
+  else if(st==='lobby'){$('svq').textContent='Terhubung. Menunggu guru memulai permainan...'}
+  else if(st==='over'){$('svq').textContent='Permainan selesai.'}
+  else if(st==='play'){
+    if(showQ){
+      if(q.qid!==stuQid){
+        stuQid=q.qid;$('svq').textContent=q.text;
+        document.querySelectorAll('#svo button').forEach(b=>{b.textContent='ABCD'[b.dataset.k]+'. '+q.opts[b.dataset.k];b.className='';b.disabled=false});
+      }
+    }else if(!stuPlaying)$('svq').textContent='Menunggu soal berikutnya...';
+  }
+  if(!SP.mv&&!stuPlaying&&SS.pos!==SP.vpos&&st!=='lobby'){SP.vpos=SS.pos;layoutAll(true)}
+}
+function stuAnswer(k){
+  if(!SS||!SS.q||SS.pending!==null||stuPlaying||SS.state!=='play')return;
+  if(SS.answer(k)){SFX.click();document.querySelectorAll('#svo button').forEach(b=>{b.disabled=true;if(+b.dataset.k===k)b.className='sel'})}
+}
+function stuRes(m){
+  stuPlaying=true;
+  setTimeout(()=>{m.good?SFX.ok():SFX.bad()},60);
+  document.querySelectorAll('#svo button').forEach(b=>{b.disabled=true;if(+b.dataset.k===m.ci)b.className='ok';else if(+b.dataset.k===SS.lastAns)b.className='no'});
+  SP.chain=SP.chain.then(()=>playStu(m.ev||[])).catch(console.error).then(()=>{stuPlaying=false;stuView()});
+}
+async function playStu(ev){
+  const P=SP;P.mv=true;focusMesh=P.mesh;
+  try{
+    for(const e of ev){
+      const k=e[0];
+      if(k==='r'){SFX.roll();await rollLocked(e[1],P.ctx);say('Dadu: '+e[1]);await wait(250)}
+      else if(k==='x'){say('Butuh angka pas untuk sampai ke 100.');await wait(600)}
+      else if(k==='s'){for(let n=e[1]+1;n<=e[2];n++){P.vpos=n;SFX.step();await tween(P.mesh,spot(0,n),230,.5)}}
+      else if(k==='b'){say('Mundur '+(e[1]-e[2])+' langkah.');for(let n=e[1]-1;n>=e[2];n--){P.vpos=n;SFX.step();await tween(P.mesh,spot(0,n),200,.4)}await wait(200)}
+      else if(k==='l')await special(P,{t:'ladder',from:e[1],to:e[2]});
+      else if(k==='h')await special(P,{t:'hole',from:e[1],to:e[2]});
+      else if(k==='f'){SFX.win();confetti(Math.round(100*QP));burst(P.mesh.position,0xffd34d,60);say('Kamu mencapai petak 100!')}
+    }
+  }finally{P.sc=P.mesh.scale.x;P.mv=false;layoutAll()}
+}
+function stuOver(){
+  if(stuOverShown)return;stuOverShown=true;
+  const o=SS.over||{},top=(o.top||[]).slice(0,5);
+  $('sfint').innerHTML='<p>Peringkat kamu: <b>'+(o.me?o.me[0]:'-')+'</b> \u00b7 petak '+(o.me?o.me[1]:SS.pos)+'</p><ol>'+top.map(t=>'<li>'+esc(t[0])+' ('+t[1]+(t[2]?', juara '+t[2]:'')+')</li>').join('')+'</ol>';
+  confetti(Math.round(120*QP),.3);SFX.win();
+  setTimeout(()=>{$('sfin').hidden=false},stuPlaying?3500:600);
+}
+// ---------- pemasangan tombol ----------
+$('m1').onclick=()=>{SEL='tim';$('m1').classList.add('on');$('m2').classList.remove('on');$('np2').parentElement.hidden=false;$('start').textContent='Mulai bermain'};
+$('m2').onclick=()=>{SEL='battle';$('m2').classList.add('on');$('m1').classList.remove('on');$('np2').parentElement.hidden=true;$('start').textContent='Buat ruangan'};
+$('lstart').onclick=startBattle;
+$('lcopy').onclick=async()=>{try{await navigator.clipboard.writeText($('llink').value);$('lcopy').textContent='Tersalin';setTimeout(()=>{$('lcopy').textContent='Salin tautan'},2000)}catch(e){alert($('llink').value)}};
+$('lplayers').onclick=e=>{const id=+(e.target.dataset&&e.target.dataset.kick);if(id&&BT&&confirm('Keluarkan siswa ini?')){BT.kick(id);renderLobby()}};
+$('btend').onclick=()=>{if(BT&&confirm('Akhiri permainan sekarang dan tampilkan hasil?'))BT.endNow()};
+$('btrep').onclick=()=>showPodium();
+
+resize();placeCam();$('np').value=4;if(MODE==='stu')initStudent();else setup(4);
 (function loop(){
   if(intro){const t=performance.now();theta+=.008;phi=1.012+.1*Math.sin(t*.0004);zoom=1.5+.08*Math.sin(t*.0003);tgt.lerp(home,.07)}
   else{
     if(homing){theta+=(0-theta)*.06;phi+=(1.012-phi)*.06;if(Math.abs(theta)<.01&&Math.abs(phi-1.012)<.01)homing=false}
-    const f=followOn&&focusMesh&&fitted;
-    tgt.lerp(f?focusMesh.position:home,.07);zoom+=((f?zoomGoal:1)-zoom)*.07;
+    const sm=MODE==='stu'&&SP&&SP.mesh,f=sm||(followOn&&focusMesh&&fitted);
+    tgt.lerp(sm?SP.mesh.position:(f?focusMesh.position:home),.07);zoom+=((f?(sm?.55:zoomGoal):1)-zoom)*.07;
   }
   spaceTick();autoQ(performance.now());sp.rotation.y+=.0006;sp.material.opacity=.7+.25*Math.sin(performance.now()*.002);
   placeCam();renderer.render(scene,camera);requestAnimationFrame(loop);
