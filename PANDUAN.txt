@@ -2,23 +2,40 @@ TANGGA GALAKSI - PAKET UNTUK VERCEL
 ====================================
 
 Isi paket (semua di satu folder, jangan dipisah):
-  index.html        Game utama (Misi Tim untuk IFP)
+  index.html        Game utama: Misi Tim (IFP) dan Battle Galaksi (semua siswa)
   uji-battle.html   Uji simulasi host 40 siswa tiruan (tanpa jaringan)
   uji-koneksi.html  Uji koneksi nyata host dan HP siswa
   vercel.json       Pengaturan keamanan dasar untuk Vercel
 
-Cara menerbitkan di Vercel:
+CARA MENERBITKAN DI VERCEL
   1. Ekstrak berkas .zip ini ke satu folder.
-  2. Terbitkan folder itu ke proyek Vercel Anda dengan cara yang biasa Anda pakai
+  2. Terbitkan folder itu ke proyek Vercel Anda dengan cara biasa
      (misalnya "vercel --prod" dari dalam folder, atau lewat repositori Git).
-  3. Buka alamat proyek: halaman utama adalah index.html.
-     Halaman uji: /uji-battle.html dan /uji-koneksi.html
+  3. Halaman utama: alamat proyek Anda. Halaman uji: /uji-battle.html dan /uji-koneksi.html
 
-Opsional (agar tidak bergantung pada server luar):
-  Unduh three.min.js (Three.js r128) dari cdnjs lewat Wi-Fi dan simpan di folder
-  yang sama dengan index.html. Game akan memakai salinan itu lebih dulu.
+MISI TIM (satu layar, maksimal 4 tim, tanpa internet setelah halaman terbuka)
+  Pilih Misi Tim, atur jumlah tim, tekan Mulai bermain.
 
-Catatan:
+BATTLE GALAKSI (guru di laptop atau IFP, siswa di HP masing-masing, maksimal 40)
+  Guru:
+    1. Pilih Battle Galaksi, tekan Buat ruangan.
+    2. Bagikan kode, tautan, atau QR kepada siswa. Tunggu nama siswa muncul di lobi.
+    3. Tekan Mulai permainan (minimal 2 siswa). Siswa yang terlambat tetap bisa masuk.
+    4. Pantau peringkat. Tekan Akhiri sekarang bila perlu. Di akhir ada hasil dan laporan Word.
+    Bank soal diambil dari Bank soal guru. Biarkan tab guru tetap terbuka di depan dan layar tidak tidur.
+    Bila halaman guru dimuat ulang, permainan hilang dan harus dibuat ulang.
+  Siswa:
+    1. Buka tautan atau pindai QR, isi nama panggilan, tekan Gabung.
+    2. Jawab soal, bidak berjalan sesuai aturan, kamera mengikuti bidak sendiri.
+    3. Bila halaman dimuat ulang, siswa otomatis masuk kembali ke tempat yang sama.
+
+OPSIONAL
+  Unduh three.min.js (Three.js r128) dari cdnjs lewat Wi-Fi dan simpan di folder yang sama
+  dengan index.html agar tidak bergantung pada server luar. Game memakainya lebih dulu.
+
+CATATAN
+  - Battle memakai layanan gratis bersama (server perantara PeerJS, relay, broker MQTT).
+    Untuk kelas penting, uji dulu dengan uji-koneksi.html.
+  - Siswa hanya memakai nama panggilan. Jangan memasukkan data pribadi.
   - Halaman uji ikut terbit dan bisa dibuka siapa pun yang tahu alamatnya.
-    Hapus kedua berkas uji-*.html bila tidak ingin diterbitkan.
   - Pengaturan dan bank soal tersimpan di browser tiap perangkat.
