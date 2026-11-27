@@ -71,6 +71,7 @@ const GameEngine=(()=>{
     E.alive=()=>E.players.filter(p=>!p.off).length;
     E.need=()=>Math.min(E.set.win,Math.max(1,E.alive()-1));
     E.checkOver=()=>{if(!E.over&&E.finished.length>=E.need()){E.over=true;return true}return false};
+    E.addPlayer=()=>{const i=E.players.length;E.players.push({i,pos:0,right:0,wrong:0,done:false,rank:0,at:0,off:false,order:shuf(E.qs.map((_,k)=>k)),k:0,cur:null,ord:[0,1,2,3],locked:true});return i};
     E.deal=i=>{
       const p=E.players[i];
       if(!E.qs.length||p.done||E.over)return null;
@@ -114,7 +115,6 @@ const GameEngine=(()=>{
   }
   return{create};
 })();
-
 // ===== BATTLE GALAKSI: protokol, host, klien siswa, jaringan virtual, dan bot (murni, tanpa DOM/3D, tanpa jaringan nyata) =====
 const BattleProto=(()=>{
   const V=1,enc=o=>JSON.stringify(o);
@@ -126,7 +126,7 @@ const BattleProto=(()=>{
 
 function createBattleHost(cfg){
   const P=BattleProto,max=cfg.max||40,now=cfg.now||(()=>Date.now());
-  const H={state:'lobby',players:[],E:null,stats:{in:0,out:0,bIn:0,bOut:0,drops:0,resend:0,bad:0,full:0},onLobby:null,onEvents:null,onOver:null};
+  const H={state:'lobby',players:[],E:null,stats:{in:0,out:0,bIn:0,bOut:0,drops:0,resend:0,bad:0,full:0},onLobby:cfg.onLobby||null,onEvents:cfg.onEvents||null,onOver:cfg.onOver||null,onJoin:cfg.onJoin||null};
   const byCid=new Map(),byToken=new Map();
   let dirty=false,lastBd=0,lastSy=0;
   const send=(p,m)=>{if(p.cid==null)return;const s=P.enc(m);H.stats.out++;H.stats.bOut+=s.length;cfg.send(p.cid,s)};
@@ -172,11 +172,14 @@ function createBattleHost(cfg){
           p.cid=cid;byCid.set(cid,p);p.off=false;if(H.E)H.E.players[p.idx].off=false;
         }
         if(p){p.seen=t;send(p,{t:'wl',id:p.id,token:p.token,name:p.name,state:H.state});if(H.state==='play')sendView(p);else if(H.state==='over')sendOver(p);return}
-        if(H.state!=='lobby'){sendRaw(cid,{t:'err',c:'started'});return}
+        if(H.state==='over'){sendRaw(cid,{t:'err',c:'over'});return}
         if(H.players.length>=max){H.stats.full++;sendRaw(cid,{t:'err',c:'full'});return}
         p={id:H.players.length+1,name:uniq(m.name),token:P.rand(),cid,idx:-1,off:false,seen:t,qid:0,sq:0,q:null,lastRes:null};
         H.players.push(p);byCid.set(cid,p);byToken.set(p.token,p);
-        send(p,{t:'wl',id:p.id,token:p.token,name:p.name,state:H.state});lobby();return;
+        send(p,{t:'wl',id:p.id,token:p.token,name:p.name,state:H.state});
+        if(H.state==='lobby')lobby();
+        else{p.idx=H.E.addPlayer();send(p,{t:'st',n:H.players.length});nextQ(p);dirty=true;H.onJoin&&H.onJoin(p)}
+        return;
       }
       const p=byCid.get(cid);if(!p)return;
       p.seen=t;
@@ -209,6 +212,7 @@ function createBattleHost(cfg){
     lastBd=lastSy=now();
     return true;
   };
+  H.endNow=()=>{if(H.state!=='play'||!H.E)return false;H.E.over=true;finishGame();return true};
   H.kick=id=>{
     const p=H.players.find(x=>x.id===id);if(!p)return false;
     send(p,{t:'kick'});if(p.cid!=null)byCid.delete(p.cid);byToken.delete(p.token);p.cid=null;p.off=true;p.kicked=true;
@@ -313,7 +317,6 @@ function createBattleSim(o){
   sim.converged=()=>!host.E?0:bots.filter(b=>b.alive&&b.S.id&&host.E.players[host.players.find(p=>p.id===b.S.id).idx].pos===b.S.pos).length;
   return sim;
 }
-
 const LAD={4:25,9:31,20:41,28:84,40:59,51:67,63:81,71:91},SNK={17:7,54:34,62:19,64:60,87:24,93:73,95:75,99:78};
 const QS=Array.from({length:40},(_,i)=>({q:'Soal '+(i+1),o:['Jawaban A '+(i+1),'Jawaban B '+(i+1),'Jawaban C '+(i+1),'Jawaban D '+(i+1)],a:i%4}));
 const $=id=>document.getElementById(id),val=id=>+$(id).value;
